@@ -10,7 +10,8 @@ var ng = {
   forms: require("@angular/forms"),
   platformBrowser: require("@angular/platform-browser"),
   platformBrowserDynamic: require("@angular/platform-browser-dynamic"),
-  router: require("@angular/router")
+  router: require("@angular/router"),
+  http: require("@angular/http")
 }
 
 var CustomerSearchComponent = ng.core.Component({
@@ -34,27 +35,65 @@ var CustomerSearchComponent = ng.core.Component({
     <h1 class="h3">Results</h1> \
   </header> \
   <ol class="list-group"> \
-    <li class="list-group-item clearfix"> \
+    <li *ngFor="let customer of customers" class="list-group-item clearfix"> \
       <h3 class="pull-right"> \
         <small class="text-uppercase">Joined</small>  \
-        2020-01-08</h3> \
+        {{ customer.created_at }}</h3> \
       <h2 class="h3"> \
-        Jaw Smith \
-        <small>jaw.smith</small> \
+        {{ customer.first_name }} {{ customer.last_name }}\
+        <small>{{ customer.username }}</small> \
       </h2> \
-      <h4>jaw.drop@mail.com</h4> \
+      <h4>{{ customer.email }}</h4> \
     </li> \
   </ol> \
 </section> \
   '
 }).Class({
-  constructor: function() {
-    this.keywords = null
-  },
+  constructor: [ 
+  ng.http.Http,
+  function(http) {
+    this.http = http;
+    this.customers = null;
+    this.keywords = null;
+  } ],
   search: function() {
-    alert('Searched for: ' + this.keywords)
+    var self = this
+    self.http.get(
+      "/customers.json?keywords=" + self.keywords
+    ).subscribe(
+      function(response) {
+        self.customers = response.json().customers
+      },
+      function(response) {
+        alert(response)
+      }
+    )
   }
 })
+
+var RESULTS = [
+  {
+    first_name: "Pat",
+    last_name: "Smith",
+    username: "patsmith",
+    email: "pat.smith@mail.com",
+    created_at: '2020-01-08'
+  },
+  {
+    first_name: "Tom",
+    last_name: "Cruise",
+    username: "tomX",
+    email: "tom.cruise@mail.com",
+    created_at: '2020-01-07'
+  },
+  {
+    first_name: "Susu",
+    last_name: "Home",
+    username: "susuhome",
+    email: "susu.home@mail.com",
+    created_at: '2019-01-08'
+  }
+]
 
 var AngularTestComponent = ng.core.Component({
   selector: 'shine-angular-test',
@@ -75,7 +114,7 @@ var AngularTestComponent = ng.core.Component({
 })
 
 var CustomerSearchAppModule = ng.core.NgModule({
-  imports: [ ng.platformBrowser.BrowserModule, ng.forms.FormsModule ],
+  imports: [ ng.platformBrowser.BrowserModule, ng.forms.FormsModule, ng.http.HttpModule ],
   declarations: [ CustomerSearchComponent ],
   bootstrap: [ CustomerSearchComponent ]
 }).Class({
