@@ -21,14 +21,10 @@ var CustomerSearchComponent = ng.core.Component({
   <h1 class="h2">Customer Search</h1> \
 </header> \
 <section class="search-form mb-5"> \
-  <div class="input-group input-group-lg"> \
-    <label for="keywords" class="sr-only">Keywords</label> \
-    <input type="text" id="keywords" name="keywords" \
-           placeholder="First Name, Last Name or Email" class="form-control input-lg" bindon-ngModel="keywords"> \
-    <span class="input-group-btn"> \
-      <input type="submit" class="btn btn-primary btn-lg" value="Find Customers" on-click="search()"> \
-    </span> \
-  </div> \
+  <label for="keywords" class="sr-only">Keywords</label> \
+  <input type="text" id="keywords" name="keywords" \
+         placeholder="First Name, Last Name or Email" class="form-control input-lg" bindon-ngModel="keywords" \
+         on-ngModelChange="search($event)"> \
 </section> \
 <section class="search-result"> \
   <header> \
@@ -56,8 +52,12 @@ var CustomerSearchComponent = ng.core.Component({
     this.customers = null;
     this.keywords = null;
   } ],
-  search: function() {
+  search: function($event) {
     var self = this
+    this.keywords = $event
+    if (this.keywords.length < 3) {
+      return;
+    }
     self.http.get(
       "/customers.json?keywords=" + self.keywords
     ).subscribe(
