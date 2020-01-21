@@ -71,30 +71,6 @@ var CustomerSearchComponent = ng.core.Component({
   }
 })
 
-var RESULTS = [
-  {
-    first_name: "Pat",
-    last_name: "Smith",
-    username: "patsmith",
-    email: "pat.smith@mail.com",
-    created_at: '2020-01-08'
-  },
-  {
-    first_name: "Tom",
-    last_name: "Cruise",
-    username: "tomX",
-    email: "tom.cruise@mail.com",
-    created_at: '2020-01-07'
-  },
-  {
-    first_name: "Susu",
-    last_name: "Home",
-    username: "susuhome",
-    email: "susu.home@mail.com",
-    created_at: '2019-01-08'
-  }
-]
-
 var AngularTestComponent = ng.core.Component({
   selector: 'shine-angular-test',
   template: '\
@@ -130,6 +106,12 @@ var AngularTestAppModule = ng.core.NgModule({
 })
 
 document.addEventListener('DOMContentLoaded', function(){
+  var shouldBootstrap = document.getElementById('angular-test')
+  if (shouldBootstrap) {
+    ng.platformBrowserDynamic.
+      platformBrowserDynamic().
+      bootstrapModule(AngularTestAppModule)
+  }
   var shouldBootstrap = document.getElementById('shine-customer-search')
   if (shouldBootstrap) {
     ng.platformBrowserDynamic.
